@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Circle</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <canvas id="gameArea">
+  </canvas>
+  <script>
+    var canvasWidth = 800;
+    var canvasHeight = 600;
+    var c = document.getElementById("gameArea");
+    var circleCenterY = canvasHeight / 2;
+    var jumpPower = 2;
+    var jumpFlag = false;
+
+    /** @type {CanvasRenderingContext2D} */
+    var ctx = c.getContext("2d");
+    var grd = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+    grd.addColorStop(0, "green");
+    grd.addColorStop(1, "blue");
+    ctx.canvas.width = canvasWidth;
+    ctx.canvas.height = canvasHeight;
+
+    function drawCircle() {
+      ctx.clearRect(0,0,canvasWidth, canvasHeight);
+  
+      ctx.beginPath();
+      ctx.arc(canvasWidth / 2, circleCenterY, canvasHeight / 4, 0, 2 * Math.PI);
+      ctx.lineWidth = 0;
+      ctx.fillStyle = grd;
+      ctx.fill();
+      ctx.moveTo(canvasWidth / 2, circleCenterY);
+      jump();
+    }
+
+    function jump() {
+      if (jumpFlag) {
+        circleCenterY -= 1;
+      } else {
+        circleCenterY += 1;
+      }
+
+      if (circleCenterY + 150 >= canvasHeight) {
+        jumpFlag = true;
+      } else if (circleCenterY <= canvasHeight / 2) {
+        jumpFlag = false;
+      }
+    }
+
+    drawCircle();
+    setInterval(drawCircle, 10);
+  </script>
+</body>
+
+</html>
