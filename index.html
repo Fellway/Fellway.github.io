@@ -13,31 +13,42 @@
   <canvas id="gameArea">
   </canvas>
   <script>
+    var c = document.getElementById("gameArea");
+
     var canvasWidth = 800;
     var canvasHeight = 600;
-    var c = document.getElementById("gameArea");
-    var circleCenterY = canvasHeight / 2;
-    var jumpPower = 2;
-    var jumpFlag = false;
+    var percent = 0;
 
     /** @type {CanvasRenderingContext2D} */
     var ctx = c.getContext("2d");
-    var grd = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
-    grd.addColorStop(0, "green");
-    grd.addColorStop(1, "blue");
     ctx.canvas.width = canvasWidth;
     ctx.canvas.height = canvasHeight;
 
+    var circleCenterY = canvasHeight / 2;
+    var jumpFlag = false;
+
     function drawCircle() {
-      ctx.clearRect(0,0,canvasWidth, canvasHeight);
-  
+      percent += 0.25;
+      if (percent > 100) {
+        percent = 0;
+      }
+      var offset = -ctx.canvas.width * 2 * percent / 100, gradient = ctx.createLinearGradient(offset, 0, ctx.canvas.width * 3 + offset, 0);
+      gradient.addColorStop('0', 'blue');
+      gradient.addColorStop('0.33', 'green');
+      gradient.addColorStop('0.66', 'blue');
+      gradient.addColorStop('1', 'green');
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       ctx.beginPath();
       ctx.arc(canvasWidth / 2, circleCenterY, canvasHeight / 4, 0, 2 * Math.PI);
       ctx.lineWidth = 0;
-      ctx.fillStyle = grd;
+      ctx.fillStyle = gradient;
       ctx.fill();
       ctx.moveTo(canvasWidth / 2, circleCenterY);
       jump();
+    }
+
+    function animateGradient() {
+      gradient = ctx.createLinearGradient(canvasWidth - (canvasHeight / 4), 0, canvasWidth, canvasHeight);
     }
 
     function jump() {
@@ -54,8 +65,8 @@
       }
     }
 
-    drawCircle();
     setInterval(drawCircle, 10);
+    setInterval(jump, 100);
   </script>
 </body>
 
