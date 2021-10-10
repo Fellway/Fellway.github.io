@@ -27,28 +27,28 @@
     var circleCenterY = canvasHeight / 2;
     var jumpFlag = false;
 
-    function drawCircle() {
+    function initGradient() {
       percent += 0.25;
       if (percent > 100) {
         percent = 0;
       }
-      var offset = -ctx.canvas.width * 2 * percent / 100, gradient = ctx.createLinearGradient(offset, 0, ctx.canvas.width * 3 + offset, 0);
+      var offset = -ctx.canvas.width * 2 * percent / 100;
+      gradient = ctx.createLinearGradient(offset, 0, ctx.canvas.width * 3 + offset, 0);
       gradient.addColorStop('0', 'blue');
       gradient.addColorStop('0.33', 'green');
       gradient.addColorStop('0.66', 'blue');
       gradient.addColorStop('1', 'green');
+      return gradient;
+    }
+
+    function drawCircle() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       ctx.beginPath();
       ctx.arc(canvasWidth / 2, circleCenterY, canvasHeight / 4, 0, 2 * Math.PI);
       ctx.lineWidth = 0;
-      ctx.fillStyle = gradient;
+      ctx.fillStyle = initGradient();
       ctx.fill();
       ctx.moveTo(canvasWidth / 2, circleCenterY);
-      jump();
-    }
-
-    function animateGradient() {
-      gradient = ctx.createLinearGradient(canvasWidth - (canvasHeight / 4), 0, canvasWidth, canvasHeight);
     }
 
     function jump() {
@@ -65,8 +65,8 @@
       }
     }
 
-    setInterval(drawCircle, 10);
-    setInterval(jump, 100);
+    setInterval(drawCircle, 5);
+    setInterval(jump, 10);
   </script>
 </body>
 
