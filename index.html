@@ -13,19 +13,21 @@
   <canvas id="gameArea">
   </canvas>
   <script>
-    var c = document.getElementById("gameArea");
-
     var canvasWidth = 800;
     var canvasHeight = 600;
-    var percent = 0;
-
-    /** @type {CanvasRenderingContext2D} */
-    var ctx = c.getContext("2d");
-    ctx.canvas.width = canvasWidth;
-    ctx.canvas.height = canvasHeight;
+    var ctx = gameArea(canvasWidth, canvasHeight);
 
     var circleCenterY = canvasHeight / 2;
+    var percent = 0;
     var jumpFlag = false;
+
+    function gameArea(width, height) {
+      /** @type {CanvasRenderingContext2D} */
+      var context = document.getElementById("gameArea").getContext("2d");
+      context.canvas.width = width;
+      context.canvas.height = height;
+      return context;
+    }
 
     function initGradient() {
       percent += 0.25;
