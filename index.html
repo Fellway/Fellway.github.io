@@ -15,11 +15,12 @@
   <script>
     var canvasWidth = 800;
     var canvasHeight = 600;
-    var ctx = gameArea(canvasWidth, canvasHeight);
-
+    var circleRadius = 150;
+    var jumpSpeed = 3;
     var circleCenterY = canvasHeight / 2;
-    var percent = 0;
-    var jumpFlag = false;
+    var ctx = gameArea(canvasWidth, canvasHeight);
+    var jumpDirection = false;
+    var gradientProgress = 0;
 
     function gameArea(width, height) {
       /** @type {CanvasRenderingContext2D} */
@@ -29,46 +30,55 @@
       return context;
     }
 
-    function initGradient() {
-      percent += 0.25;
-      if (percent > 100) {
-        percent = 0;
+    function gradient() {
+      gradientProgress += 1;
+      if (gradientProgress > 100) {
+        gradientProgress = 0;
       }
-      var offset = -ctx.canvas.width * 2 * percent / 100;
-      gradient = ctx.createLinearGradient(offset, 0, ctx.canvas.width * 3 + offset, 0);
-      gradient.addColorStop('0', 'blue');
-      gradient.addColorStop('0.33', 'green');
-      gradient.addColorStop('0.66', 'blue');
-      gradient.addColorStop('1', 'green');
-      return gradient;
+      var offset = -ctx.canvas.width * 2 * gradientProgress / 100;
+      grad = ctx.createLinearGradient(offset, 0, ctx.canvas.width * 3 + offset, 0);
+      grad.addColorStop('0', 'blue');
+      grad.addColorStop('0.33', 'green');
+      grad.addColorStop('0.66', 'blue');
+      grad.addColorStop('1', 'green');
+      ctx.fillStyle = grad;
+      ctx.fill();
+      window.requestAnimationFrame(gradient);
     }
 
     function drawCircle() {
+      var middleOfGameArea = canvasWidth / 2;
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       ctx.beginPath();
-      ctx.arc(canvasWidth / 2, circleCenterY, canvasHeight / 4, 0, 2 * Math.PI);
+      ctx.arc(middleOfGameArea, circleCenterY, circleRadius, 0, 2 * Math.PI);
       ctx.lineWidth = 0;
-      ctx.fillStyle = initGradient();
       ctx.fill();
-      ctx.moveTo(canvasWidth / 2, circleCenterY);
+      ctx.moveTo(middleOfGameArea, circleCenterY);
+      window.requestAnimationFrame(drawCircle);
     }
 
     function jump() {
-      if (jumpFlag) {
-        circleCenterY -= 1;
+      if (jumpDirection) {
+        circleCenterY -= jumpSpeed;
       } else {
-        circleCenterY += 1;
+        circleCenterY += jumpSpeed;
       }
 
-      if (circleCenterY + 150 >= canvasHeight) {
-        jumpFlag = true;
+      if (circleCenterY + circleRadius >= canvasHeight) {
+        jumpDirection = true;
       } else if (circleCenterY <= canvasHeight / 2) {
-        jumpFlag = false;
+        jumpDirection = false;
       }
+      window.requestAnimationFrame(jump);
     }
 
-    setInterval(drawCircle, 5);
-    setInterval(jump, 10);
+    function animate() {
+      window.requestAnimationFrame(drawCircle);
+      window.requestAnimationFrame(jump);
+      window.requestAnimationFrame(gradient);
+    }
+
+    animate();
   </script>
 </body>
 
