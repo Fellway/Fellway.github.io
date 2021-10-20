@@ -22,6 +22,7 @@ class Enemy {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.radius = 10;
         this.speed = 0.2;
     }
 
@@ -32,7 +33,8 @@ class Bullet {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.speed = 4;
+        this.radius = 5;
+        this.speed = 2;
     }
 
 }
@@ -69,7 +71,7 @@ function drawBullets() {
         context.fillStyle = 'black';
         bullet.y = bullet.y -= bullet.speed;
         context.beginPath();
-        context.arc(bullet.x + player.width / 2, bullet.y, 5, 0, 2 * Math.PI);
+        context.arc(bullet.x, bullet.y, bullet.radius, 0, 2 * Math.PI);
         context.fill();
         context.moveTo(bullet.x, bullet.y);
     });
@@ -84,14 +86,36 @@ function drawEnemy() {
         context.fillStyle = 'black';
         enemy.y = enemy.y += enemy.speed;
         context.beginPath();
-        context.arc(enemy.x, enemy.y, 10, 0, 2 * Math.PI);
+        context.arc(enemy.x, enemy.y, enemy.radius, 0, 2 * Math.PI);
         context.fill();
         context.moveTo(enemy.x, enemy.y);
     });
+
+    enemies = enemies.filter(function (enemy) {
+        return enemy.y < canvasHeight;
+    })
 }
 
 function generateEnemy() {
     enemies.push(new Enemy(getRandomInt(0, canvasWidth), 0));
+}
+
+function colisionDetection() {
+    bullets.forEach(bullet => {
+        enemies.forEach(enemy => {
+            var dx = (bullet.x + bullet.radius) - (enemy.x + enemy.radius);
+            var dy = (bullet.y + bullet.radius) - (enemy.y + enemy.radius);
+            var distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < bullet.radius + enemy.radius) {
+                enemies = enemies.filter(function (e) {
+                    return e != enemy;
+                })
+                bullets = bullets.filter(function (b) {
+                    return b != bullet;
+                })
+            }
+        })
+    });
 }
 
 function getRandomInt(min, max) {
@@ -135,7 +159,7 @@ function refreshPlayerPosition() {
     }
 
     if (keys.isSpacebarPressed && canShoot()) {
-        bullets.push(new Bullet(player.position.x, player.position.y));
+        bullets.push(new Bullet(player.position.x + player.width / 2, player.position.y));
         player.shoot.lastShoot = Date.now();
     }
 
@@ -154,5 +178,6 @@ function initKeyListeners() {
 
 initKeyListeners();
 initGameArea(canvasWidth, canvasHeight);
-setInterval(refreshGameArea, 5);
+setInterval(refreshGameArea, 6);
 setInterval(generateEnemy, 2000);
+setInterval(colisionDetection, 3);
