@@ -4,6 +4,7 @@ var canvasHeight = 600;
 var context;
 var bullets = [];
 var enemies = [];
+var score = 0;
 
 const direction = {
     LEFT: "left",
@@ -113,9 +114,15 @@ function colisionDetection() {
                 bullets = bullets.filter(function (b) {
                     return b != bullet;
                 })
+                increaseScore();
             }
         })
     });
+}
+
+function increaseScore() {
+    score++;
+    document.getElementById("score").innerHTML = score;
 }
 
 function getRandomInt(min, max) {
