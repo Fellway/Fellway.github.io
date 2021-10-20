@@ -3,6 +3,7 @@ var canvasHeight = 600;
 /** @type {CanvasRenderingContext2D} */
 var context;
 var bullets = [];
+var enemies = [];
 
 const direction = {
     LEFT: "left",
@@ -16,12 +17,22 @@ const keys = {
     isLeftArrowPressed: false
 }
 
+class Enemy {
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.speed = 0.2;
+    }
+
+}
+
 class Bullet {
 
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.speed = 3;
+        this.speed = 4;
     }
 
 }
@@ -34,9 +45,9 @@ const player = {
         x: canvasWidth / 2 - 50,
         y: canvasHeight - 60
     },
-    moveSpeed: 2,
+    moveSpeed: 3,
     shoot: {
-        frequently: 500,
+        frequently: 200,
         lastShoot: Date.now()
     }
 }
@@ -58,14 +69,35 @@ function drawBullets() {
         context.fillStyle = 'black';
         bullet.y = bullet.y -= bullet.speed;
         context.beginPath();
-        context.arc(bullet.x + player.width / 2, bullet.y , 5, 0, 2 * Math.PI);
+        context.arc(bullet.x + player.width / 2, bullet.y, 5, 0, 2 * Math.PI);
         context.fill();
         context.moveTo(bullet.x, bullet.y);
     });
 
-    bullets = bullets.filter(function(bullet){
+    bullets = bullets.filter(function (bullet) {
         return bullet.y > 0;
     })
+}
+
+function drawEnemy() {
+    enemies.forEach(enemy => {
+        context.fillStyle = 'black';
+        enemy.y = enemy.y += enemy.speed;
+        context.beginPath();
+        context.arc(enemy.x, enemy.y, 10, 0, 2 * Math.PI);
+        context.fill();
+        context.moveTo(enemy.x, enemy.y);
+    });
+}
+
+function generateEnemy() {
+    enemies.push(new Enemy(getRandomInt(0, canvasWidth), 0));
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function setDirection(e, isPressed) {
@@ -92,24 +124,25 @@ function refreshGameArea() {
     refreshPlayerPosition();
     drawPlayerRectangle();
     drawBullets();
+    drawEnemy();
 }
 
 function refreshPlayerPosition() {
-    if(keys.isLeftArrowPressed && !keys.isRightArrowPressed) {
+    if (keys.isLeftArrowPressed && !keys.isRightArrowPressed) {
         player.position.x -= player.moveSpeed;
     } else if (keys.isRightArrowPressed && !keys.isLeftArrowPressed) {
         player.position.x += player.moveSpeed;
-    } 
+    }
 
     if (keys.isSpacebarPressed && canShoot()) {
         bullets.push(new Bullet(player.position.x, player.position.y));
         player.shoot.lastShoot = Date.now();
     }
 
-    if(player.position.x <= 0) {
-        player.position.x = 0;
-    } else if (player.position.x >= canvasWidth - player.width) {
-        player.position.x = canvasWidth - player.width;
+    if (player.position.x <= -player.width / 2) {
+        player.position.x = -player.width / 2;
+    } else if (player.position.x >= canvasWidth - player.width / 2) {
+        player.position.x = canvasWidth - player.width / 2;
     }
 }
 
@@ -122,3 +155,4 @@ function initKeyListeners() {
 initKeyListeners();
 initGameArea(canvasWidth, canvasHeight);
 setInterval(refreshGameArea, 5);
+setInterval(generateEnemy, 2000);
