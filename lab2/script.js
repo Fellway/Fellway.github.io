@@ -34,7 +34,11 @@ const player = {
         x: canvasWidth / 2 - 50,
         y: canvasHeight - 60
     },
-    moveSpeed: 2
+    moveSpeed: 2,
+    shoot: {
+        frequently: 500,
+        lastShoot: Date.now()
+    }
 }
 
 function initGameArea(width, height) {
@@ -52,10 +56,16 @@ function drawPlayerRectangle() {
 function drawBullets() {
     bullets.forEach(bullet => {
         context.fillStyle = 'black';
-        bullet.y = bullet.y -= bullet.speed,
-        context.fillRect(bullet.x, bullet.y, player.width, player.height);
-        context.closePath();
+        bullet.y = bullet.y -= bullet.speed;
+        context.beginPath();
+        context.arc(bullet.x + player.width / 2, bullet.y , 5, 0, 2 * Math.PI);
+        context.fill();
+        context.moveTo(bullet.x, bullet.y);
     });
+
+    bullets = bullets.filter(function(bullet){
+        return bullet.y > 0;
+    })
 }
 
 function setDirection(e, isPressed) {
@@ -73,6 +83,10 @@ function setDirection(e, isPressed) {
     }
 }
 
+function canShoot() {
+    return new Date(Date.now() - player.shoot.frequently) > player.shoot.lastShoot
+}
+
 function refreshGameArea() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     refreshPlayerPosition();
@@ -87,8 +101,9 @@ function refreshPlayerPosition() {
         player.position.x += player.moveSpeed;
     } 
 
-    if (keys.isSpacebarPressed) {
+    if (keys.isSpacebarPressed && canShoot()) {
         bullets.push(new Bullet(player.position.x, player.position.y));
+        player.shoot.lastShoot = Date.now();
     }
 
     if(player.position.x <= 0) {
