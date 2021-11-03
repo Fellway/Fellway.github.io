@@ -5,6 +5,12 @@ const keyMap = {
 
 var ctx;
 
+const config = {
+
+    carSpeed: 2
+
+}
+
 class Game2D {
 
     constructor(width, height) {
@@ -42,13 +48,12 @@ class Car {
 
 class Road {
 
-    ROAD_TYPE = {
-        STRAIGHT: "straight",
-        LEFT: "left",
-        RIGHT: "right",
-        STRONG_LEFT: "strong_left",
-        STRONG_RIGHT: "strong_right"
-    };
+    lineHeight = 50;
+    lineWidth = 20;
+
+    constructor() {
+        this.y = 0;
+    }
 
     drawRoad() {
         const width = ctx.canvas.width;
@@ -57,15 +62,26 @@ class Road {
         ctx.fillStyle = 'grey';
         ctx.fillRect(width / 2 - 250, 0, 500, height);
         ctx.closePath();
+        this.#drawLines();
     }
 
-    drawLine() {
+    #drawLines() {
         const width = ctx.canvas.width;
         const height = ctx.canvas.height;
-        ctx.beginPath();
-        ctx.fillStyle = 'white';
-        ctx.fillRect(width / 2 - 10, 0, 20, 50);
-        ctx.closePath();
+        
+        for (let i = -ctx.canvas.height; i < height; i += this.lineHeight * 2) {
+            ctx.beginPath();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(width / 2 - 10, i + this.y, this.lineWidth, this.lineHeight);
+            ctx.closePath();
+        }
+    }
+
+    move() {
+        this.y += config.carSpeed;
+        if (this.y >= ctx.canvas.height) {
+            this.y =  0;
+        }
     }
 
 }
@@ -104,8 +120,8 @@ initKeyListeners(car);
 
 function refreshGameArea() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    road.move();
     road.drawRoad();
-    road.drawLine();
     car.move();
     car.drawCar();
 }
