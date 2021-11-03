@@ -5,6 +5,8 @@ const keyMap = {
 
 var ctx;
 var obstacles = [];
+var bonuses = [];
+var score = 0;
 
 const config = {
 
@@ -17,6 +19,10 @@ const config = {
     car: {
         width: 50,
         height: 75
+    },
+    bonus: {
+        width: 10,
+        height: 10
     }
 
 }
@@ -26,6 +32,28 @@ class Game2D {
     constructor(width, height) {
         this.width = width;
         this.height = height;
+    }
+
+}
+
+class Bonus {
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = config.bonus.width;
+        this.height = config.bonus.height;
+    }
+
+    drawBonus() {
+        ctx.beginPath();
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.closePath();
+    }
+
+    move() {
+        this.y += config.carSpeed;
     }
 
 }
@@ -186,6 +214,11 @@ function spawnObstacle() {
     obstacles.push(new Obstacle(getRandomInt(canvasWidth / 2 - config.roadWidth / 2, canvasWidth / 2 + config.roadWidth / 2), -100));
 }
 
+function spawnBonus() {
+    const canvasWidth = ctx.canvas.width;
+    bonuses.push(new Bonus(getRandomInt(canvasWidth / 2 - config.roadWidth / 2, canvasWidth / 2 + config.roadWidth / 2), -100));
+}
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -207,10 +240,27 @@ function colisionDetection() {
             gameOver();
         }
     });
+    bonuses.forEach(o2 => {
+        if (o1.x < o2.x + o2.width &&
+            o1.x + o1.width > o2.x &&
+            o1.y < o2.y + o2.height &&
+            o1.height + o1.y > o2.y) {
+            bonuses = bonuses.filter(function (bonus) {
+                return bonus !== o2;
+            });
+            score++;
+        }
+    });
 }
 
 function gameOver() {
     config.carSpeed = 0;
+}
+
+function drawScore() {
+    ctx.font = '48px serif';
+    ctx.fillStyle = "Black";
+    ctx.fillText('Score: ' + score, 10, 50);
 }
 
 initContext();
@@ -218,9 +268,10 @@ var game = new Game2D(800, 600);
 var road = new Road();
 var car = new Car();
 setInterval(spawnObstacle, 1000);
+setInterval(spawnBonus, 500);
 setInterval(refreshGameArea, 15);
 setInterval(colisionDetection, 15);
-initKeyListeners(car);
+initKeyListeners();
 
 function refreshGameArea() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -228,6 +279,7 @@ function refreshGameArea() {
     road.drawRoad();
     car.move();
     car.drawCar();
+    drawScore();
     obstacles.forEach(obstacle => {
         obstacle.move();
         obstacle.drawObstacle();
@@ -237,5 +289,14 @@ function refreshGameArea() {
             })
         }
     });
+    bonuses.forEach(bonus => {
+        bonus.move();
+        bonus.drawBonus();
+        if (bonus.y > ctx.canvas.height) {
+            bonuses = bonuses.filter(function (bonus) {
+                return bonus.y < ctx.canvas.height;
+            })
+        }
+    })
 }
 
