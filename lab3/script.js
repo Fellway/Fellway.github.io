@@ -37,7 +37,6 @@ class Car {
         this.y = ctx.canvas.height - 100;
         this.width = config.car.width;
         this.height = config.car.height;
-        this.speed = config.carSpeed;
         this.drawCar();
     }
 
@@ -50,9 +49,9 @@ class Car {
 
     move() {
         if (keyMap.isLeftArrowPressed && !keyMap.isRightArrowPressed) {
-            this.x -= this.speed;
+            this.x -= config.carSpeed;
         } else if (keyMap.isRightArrowPressed && !keyMap.isLeftArrowPressed) {
-            this.x += this.speed;
+            this.x += config.carSpeed;
         }
     }
 
@@ -195,13 +194,23 @@ function getRandomInt(min, max) {
 
 function colisionDetection() {
     var o1 = car;
+    var leftLimit = ctx.canvas.width / 2 - config.roadWidth / 2;
+    var rightLimit = ctx.canvas.width / 2 - config.roadWidth / 2 + config.roadWidth - o1.width;
+    if ((o1.x < leftLimit) || o1.x > rightLimit) {
+        gameOver();
+    }
     obstacles.forEach(o2 => {
         if (o1.x < o2.x + o2.width &&
             o1.x + o1.width > o2.x &&
             o1.y < o2.y + o2.height &&
             o1.height + o1.y > o2.y) {
+            gameOver();
         }
     });
+}
+
+function gameOver() {
+    config.carSpeed = 0;
 }
 
 initContext();
