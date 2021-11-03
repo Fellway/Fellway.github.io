@@ -9,7 +9,15 @@ var obstacles = [];
 const config = {
 
     carSpeed: 2,
-    roadWidth: 500
+    roadWidth: 500,
+    obstacle: {
+        width: 50,
+        height: 20
+    },
+    car: {
+        width: 50,
+        height: 100
+    }
 
 }
 
@@ -27,13 +35,15 @@ class Car {
     constructor() {
         this.x = ctx.canvas.width / 2;
         this.y = ctx.canvas.height - 200;
+        this.width = config.car.width;
+        this.height = config.car.height;
         this.speed = 2;
         this.drawCar();
     }
 
     drawCar() {
         ctx.fillStyle = 'black';
-        ctx.fillRect(this.x, this.y, 50, 100);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.closePath();
         ctx.fill();
     }
@@ -93,12 +103,14 @@ class Obstacle {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.width = config.obstacle.width;
+        this.height = config.obstacle.height;
     }
 
     drawObstacle() {
         ctx.beginPath();
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, 50, 20);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.closePath();
     }
 
@@ -143,6 +155,16 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function colisionDetection() {
+    var o1 = car;
+    obstacles.forEach(o2 => {
+        if (o1.x < o2.x + o2.width &&
+            o1.x + o1.width > o2.x &&
+            o1.y < o2.y + o2.height &&
+            o1.height + o1.y > o2.y) {
+        }
+    });
+}
 
 initContext();
 var game = new Game2D(800, 600);
@@ -150,6 +172,7 @@ var road = new Road();
 var car = new Car();
 setInterval(spawnObstacle, 1000);
 setInterval(refreshGameArea, 6);
+setInterval(colisionDetection, 6);
 initKeyListeners(car);
 
 function refreshGameArea() {
