@@ -4,10 +4,12 @@ const keyMap = {
 }
 
 var ctx;
+var obstacles = [];
 
 const config = {
 
-    carSpeed: 2
+    carSpeed: 2,
+    roadWidth: 500
 
 }
 
@@ -60,7 +62,7 @@ class Road {
         const height = ctx.canvas.height;
         ctx.beginPath();
         ctx.fillStyle = 'grey';
-        ctx.fillRect(width / 2 - 250, 0, 500, height);
+        ctx.fillRect(width / 2 - config.roadWidth / 2, 0, config.roadWidth, height);
         ctx.closePath();
         this.#drawLines();
     }
@@ -68,7 +70,7 @@ class Road {
     #drawLines() {
         const width = ctx.canvas.width;
         const height = ctx.canvas.height;
-        
+
         for (let i = -ctx.canvas.height; i < height; i += this.lineHeight * 2) {
             ctx.beginPath();
             ctx.fillStyle = 'white';
@@ -80,8 +82,28 @@ class Road {
     move() {
         this.y += config.carSpeed;
         if (this.y >= ctx.canvas.height) {
-            this.y =  0;
+            this.y = 0;
         }
+    }
+
+}
+
+class Obstacle {
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    drawObstacle() {
+        ctx.beginPath();
+        ctx.fillStyle = 'red';
+        ctx.fillRect(this.x, this.y, 50, 20);
+        ctx.closePath();
+    }
+
+    move() {
+        this.y += config.carSpeed;
     }
 
 }
@@ -110,11 +132,23 @@ function setDirection(e, isPressed) {
     }
 }
 
+function spawnObstacle() {
+    const canvasWidth = ctx.canvas.width;
+    obstacles.push(new Obstacle(getRandomInt(canvasWidth / 2 - config.roadWidth / 2, canvasWidth / 2 + config.roadWidth / 2), -100));
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
 
 initContext();
 var game = new Game2D(800, 600);
 var road = new Road();
 var car = new Car();
+setInterval(spawnObstacle, 1000);
 setInterval(refreshGameArea, 6);
 initKeyListeners(car);
 
@@ -124,5 +158,14 @@ function refreshGameArea() {
     road.drawRoad();
     car.move();
     car.drawCar();
+    obstacles.forEach(obstacle => {
+        obstacle.move();
+        obstacle.drawObstacle();
+        if (obstacle.y > ctx.canvas.height) {
+            obstacles = obstacles.filter(function (obstacle) {
+                return obstacle.y < ctx.canvas.height;
+            })
+        }
+    });
 }
 
