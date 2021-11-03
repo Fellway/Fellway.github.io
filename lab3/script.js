@@ -1,30 +1,41 @@
+const keyMap = {
+    isRightArrowPressed: false,
+    isLeftArrowPressed: false
+}
+
+var ctx;
+
 class Game2D {
 
-    constructor(width, height, gameDivId) {
+    constructor(width, height) {
         this.width = width;
         this.height = height;
-        /** @type {CanvasRenderingContext2D} */
-        this.context = document.getElementById(gameDivId).getContext("2d");
-        this.#initContext();
-    }
-
-    #initContext() {
-        this.context.canvas.width = this.width;
-        this.context.canvas.height = this.height;
     }
 
 }
 
 class Car {
 
-    constructor(gameContext) {
-        this.#drawCar(gameContext);
+    constructor() {
+        this.x = ctx.canvas.width / 2;
+        this.y = ctx.canvas.height - 200;
+        this.speed = 2;
+        this.drawCar();
     }
 
-    #drawCar(gameContext) {
-        gameContext.fillStyle = 'black';
-        gameContext.fillRect(gameContext.canvas.width / 2 - 50, gameContext.canvas.width / 2, 30, 60);
-        gameContext.closePath();
+    drawCar() {
+        ctx.fillStyle = 'black';
+        ctx.fillRect(this.x, this.y, 50, 100);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    move() {
+        if (keyMap.isLeftArrowPressed && !keyMap.isRightArrowPressed) {
+            this.x -= this.speed;
+        } else if (keyMap.isRightArrowPressed && !keyMap.isLeftArrowPressed) {
+            this.x += this.speed;
+        }
     }
 
 }
@@ -39,25 +50,63 @@ class Road {
         STRONG_RIGHT: "strong_right"
     };
 
-    constructor(gameContext) {
-        this.#drawRoad(gameContext);
+    drawRoad() {
+        const width = ctx.canvas.width;
+        const height = ctx.canvas.height;
+        ctx.beginPath();
+        ctx.fillStyle = 'grey';
+        ctx.fillRect(width / 2 - 250, 0, 500, height);
+        ctx.closePath();
     }
 
-    #drawRoad(gameContext) {
-        const width = gameContext.canvas.width;
-        const height = gameContext.canvas.height;
-        gameContext.fillStyle = 'grey';
-        gameContext.beginPath();
-        // gameContext.fillRect(width / 2 - 250,  0, 500, height);
-        gameContext.arc(width / 2 , height / 2, 100, 90, 2 * Math.PI);
-        gameContext.fill();
-        gameContext.stroke();
-        // gameContext.closePath();
+    drawLine() {
+        const width = ctx.canvas.width;
+        const height = ctx.canvas.height;
+        ctx.beginPath();
+        ctx.fillStyle = 'white';
+        ctx.fillRect(width / 2 - 10, 0, 20, 50);
+        ctx.closePath();
     }
 
 }
 
-var game = new Game2D(800, 600, "gameArea");
-var road = new Road(game.context);
-var car = new Car(game.context);
+function initContext() {
+    /** @type {CanvasRenderingContext2D} */
+    ctx = document.getElementById("gameArea").getContext("2d");
+    ctx.canvas.width = 800;
+    ctx.canvas.height = 600;
+}
+
+function initKeyListeners() {
+    window.addEventListener('keydown', (e) => this.setDirection(e, true), false);
+    window.addEventListener('keyup', (e) => this.setDirection(e, false), false);
+}
+
+function setDirection(e, isPressed) {
+    var key = e.keyCode;
+    switch (key) {
+        case (37):
+            isPressed ? keyMap.isLeftArrowPressed = true : keyMap.isLeftArrowPressed = false;
+            break;
+        case (39):
+            isPressed ? keyMap.isRightArrowPressed = true : keyMap.isRightArrowPressed = false;
+            break;
+    }
+}
+
+
+initContext();
+var game = new Game2D(800, 600);
+var road = new Road();
+var car = new Car();
+setInterval(refreshGameArea, 6);
+initKeyListeners(car);
+
+function refreshGameArea() {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    road.drawRoad();
+    road.drawLine();
+    car.move();
+    car.drawCar();
+}
 
