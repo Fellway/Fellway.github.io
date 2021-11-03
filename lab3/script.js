@@ -8,7 +8,7 @@ var obstacles = [];
 
 const config = {
 
-    carSpeed: 2,
+    carSpeed: 5,
     roadWidth: 500,
     obstacle: {
         width: 50,
@@ -34,10 +34,10 @@ class Car {
 
     constructor() {
         this.x = ctx.canvas.width / 2;
-        this.y = ctx.canvas.height - 200;
+        this.y = ctx.canvas.height - 100;
         this.width = config.car.width;
         this.height = config.car.height;
-        this.speed = 2;
+        this.speed = config.carSpeed;
         this.drawCar();
     }
 
@@ -61,30 +61,68 @@ class Car {
 class Road {
 
     lineHeight = 50;
-    lineWidth = 20;
+    lineWidth = 10;
+    sectionWidth = 50;
 
     constructor() {
         this.y = 0;
     }
 
     drawRoad() {
-        const width = ctx.canvas.width;
-        const height = ctx.canvas.height;
+        this.#drawGrass();
+        this.#drawAsphalt();
+        this.#drawLines();
+        this.#drawSections();
+    }
+
+    #drawAsphalt() {
         ctx.beginPath();
         ctx.fillStyle = 'grey';
-        ctx.fillRect(width / 2 - config.roadWidth / 2, 0, config.roadWidth, height);
+        ctx.fillRect(ctx.canvas.width / 2 - config.roadWidth / 2, 0, config.roadWidth, ctx.canvas.height);
         ctx.closePath();
-        this.#drawLines();
+    }
+
+    #drawGrass() {
+        ctx.beginPath();
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.closePath();
     }
 
     #drawLines() {
         const width = ctx.canvas.width;
         const height = ctx.canvas.height;
-
         for (let i = -ctx.canvas.height; i < height; i += this.lineHeight * 2) {
             ctx.beginPath();
             ctx.fillStyle = 'white';
             ctx.fillRect(width / 2 - 10, i + this.y, this.lineWidth, this.lineHeight);
+            ctx.closePath();
+        }
+    }
+
+    #drawSections() {
+        const width = ctx.canvas.width;
+        const height = ctx.canvas.height;
+
+        for (let i = -ctx.canvas.height; i < height; i += this.lineHeight * 2) {
+            ctx.beginPath();
+            ctx.fillStyle = 'red';
+            ctx.fillRect(width / 2 + config.roadWidth / 2 - this.sectionWidth, i + this.y, this.sectionWidth, this.lineHeight);
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.fillStyle = 'red';
+            ctx.fillRect(width / 2 - config.roadWidth / 2, i + this.y, this.sectionWidth, this.lineHeight);
+            ctx.closePath();
+        }
+
+        for (let i = -ctx.canvas.height - this.lineHeight; i < height; i += this.lineHeight * 2) {
+            ctx.beginPath();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(width / 2 + config.roadWidth / 2 - this.sectionWidth, i + this.y, this.sectionWidth, this.lineHeight);
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(width / 2 - config.roadWidth / 2, i + this.y, this.sectionWidth, this.lineHeight);
             ctx.closePath();
         }
     }
@@ -109,7 +147,7 @@ class Obstacle {
 
     drawObstacle() {
         ctx.beginPath();
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = 'black';
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.closePath();
     }
@@ -171,8 +209,8 @@ var game = new Game2D(800, 600);
 var road = new Road();
 var car = new Car();
 setInterval(spawnObstacle, 1000);
-setInterval(refreshGameArea, 6);
-setInterval(colisionDetection, 6);
+setInterval(refreshGameArea, 15);
+setInterval(colisionDetection, 15);
 initKeyListeners(car);
 
 function refreshGameArea() {
