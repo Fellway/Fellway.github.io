@@ -16,7 +16,7 @@ const config = {
     },
     car: {
         width: 50,
-        height: 100
+        height: 75
     }
 
 }
@@ -42,8 +42,8 @@ class Car {
     }
 
     drawCar() {
-        ctx.fillStyle = 'black';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        var carImg = document.getElementById("car");
+        ctx.drawImage(carImg, this.x, this.y);
         ctx.closePath();
         ctx.fill();
     }
