@@ -1,3 +1,9 @@
+body {
+    background-image: url('assets/paper.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 #wrap {
     position: relative;
     float: left;
@@ -6,13 +12,42 @@
 }
 
 #game-area {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     padding: 50px;
     border-radius: 20px;
     width: fit-content;
-    min-width: fit-content;
+    background-color:#4e342e;
+    display: grid;
+    row-gap: 40px;
+}
+
+#scoreboard {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 50px;
     margin: 0 auto;
-    background-color: red;
+    font-size: 50px;
+    color: white;
+}
+
+#guess-word {
     display: flex;
+    margin: 0 auto;
+    width: fit-content;
+    padding: 20px;
+    background-color: #546e7a;
+    border-radius: 20px;
+}
+
+#keyboard {
+    background-color: #37474f;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 .blank-block, .spacebar-block {
@@ -31,11 +66,6 @@
     text-transform: capitalize;
 }
 
-#keyboard {
-    margin: 0 auto;
-    width: fit-content;
-}
-
 .keyboard-row {
     display: block;
     text-align: center;
@@ -47,4 +77,5 @@
     width: 50px;
     height: 50px;
     border-radius: 5px;
+    text-transform: capitalize;
 }

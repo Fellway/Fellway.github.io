@@ -1,14 +1,16 @@
 
 var game = {
-  zdobyte: 0,
-  lifes: 5,
+  score: 0,
+  lifes: 10,
 }
 
 var word = data[getRandomInt(0, data.length)]['country'];
 createHiddenWordField(word);
 document.getElementById("numberOfLives").innerHTML = game.lifes;
+document.getElementById("score").innerHTML = game.score;
 
 function checkLetter(letter) {
+  disableLetterButton(letter);
   if (!word.includes(letter)) {
     game.lifes--;
     document.getElementById("numberOfLives").innerHTML = game.lifes;
@@ -16,10 +18,19 @@ function checkLetter(letter) {
     while (word.includes(letter)) {
       fillBlankBlock(letter);
       word = word.toLowerCase().replace(letter, "#");
+      game.score += 100;
+      document.getElementById("score").innerHTML = game.score;
     }
   }
   checkLose();
   checkWin();
+}
+
+function disableLetterButton(letter) {
+  alreadyChecked.push(letter);
+  alreadyChecked.forEach(letter => {
+    document.getElementById(letter).disabled = true;
+  });
 }
 
 function checkLose() {
@@ -43,7 +54,7 @@ function fillBlankBlock(letter) {
 
 function createHiddenWordField(word) {
   var wordLength = word.length;
-  var gameArea = document.getElementById("game-area");
+  var gameArea = document.getElementById("guess-word");
   for (var i = 0; i < wordLength; i++) {
     if (word[i] === ' ') {
       gameArea.innerHTML = gameArea.innerHTML + "<div class='spacebar-block'></div>"
