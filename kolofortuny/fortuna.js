@@ -1,32 +1,38 @@
 
 var game = {
   zdobyte: 0,
-  lifes: 1,
+  lifes: 5,
 }
 
-var word = data[0]['country'];
-console.log(word);
-// alert(data[0]['country']);
-
-// alert(data.length);
-// alert(data[0]['country'][2]);
-
-//  for (var i = 0; i < data[0]['country'].length; i += 1) {
-//     alert(data[0]['country'][i]);  
-//   }
+var word = data[getRandomInt(0, data.length)]['country'];
 createHiddenWordField(word);
-addElement("wrap");
-//LISTENERS
-
-document.getElementById("graj").addEventListener("click", Sprawdz_Litery);
 document.getElementById("numberOfLives").innerHTML = game.lifes;
 
+function checkLetter(letter) {
+  if (!word.includes(letter)) {
+    game.lifes--;
+    document.getElementById("numberOfLives").innerHTML = game.lifes;
+  } else {
+    while (word.includes(letter)) {
+      fillBlankBlock(letter);
+      word = word.toLowerCase().replace(letter, "#");
+    }
+  }
+  checkLose();
+  checkWin();
+}
 
-//FUNKCJE
-function Sprawdz_Litery() {
-  var letter = document.getElementById("wpisz_litere").value;
-  if (word.includes(letter)) {
-    fillBlankBlock(letter);
+function checkLose() {
+  if (game.lifes === 0) {
+    alert("You lose!");
+  }
+}
+
+function checkWin() {
+  var wordWithoutSpaces = word.split(" ").join('');
+  var regexp = new RegExp('#{' + wordWithoutSpaces.length + '}');
+  if (regexp.test(wordWithoutSpaces)) {
+    alert("You win!!");
   }
 }
 
@@ -39,13 +45,12 @@ function createHiddenWordField(word) {
   var wordLength = word.length;
   var gameArea = document.getElementById("game-area");
   for (var i = 0; i < wordLength; i++) {
-    gameArea.innerHTML = gameArea.innerHTML + "<div id='letter-" + i + "' class='blank-block'></div>";
+    if (word[i] === ' ') {
+      gameArea.innerHTML = gameArea.innerHTML + "<div class='spacebar-block'></div>"
+    } else {
+      gameArea.innerHTML = gameArea.innerHTML + "<div id='letter-" + i + "' class='blank-block'></div>";
+    }
   }
-}
-
-
-function addElement(mydiv) {
-
 }
 
 function getRandomInt(min, max) {
