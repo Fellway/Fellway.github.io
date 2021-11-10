@@ -65,12 +65,15 @@ function fillBlankBlock(letter) {
 function createHiddenWordField(word) {
   var wordLength = word.length;
   var gameArea = document.getElementById("guess-word");
+  var row = createGuessWordRow();
   for (var i = 0; i < wordLength; i++) {
     if (word[i] === ' ') {
-      gameArea.innerHTML = gameArea.innerHTML + "<div class='spacebar-block'></div>"
+      gameArea.appendChild(row);
+      row = createGuessWordRow();
     } else {
-      gameArea.innerHTML = gameArea.innerHTML + "<div id='letter-" + i + "' class='blank-block'></div>";
+      row.appendChild(createBlankBlock(i));
     }
+    gameArea.appendChild(row);
   }
 }
 
@@ -78,4 +81,17 @@ function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function createBlankBlock(id) {
+  var blankBlock = document.createElement('div');
+  blankBlock.id = 'letter-' + id;
+  blankBlock.classList.add('blank-block');
+  return blankBlock;
+}
+
+function createGuessWordRow() {
+  var row = document.createElement('div');
+  row.classList.add('row');
+  return row;
 }
