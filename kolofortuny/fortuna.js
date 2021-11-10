@@ -9,6 +9,16 @@ createHiddenWordField(word);
 document.getElementById("numberOfLives").innerHTML = game.lifes;
 document.getElementById("score").innerHTML = game.score;
 
+document.getElementById("close-button").onclick = function() {
+  document.getElementById("modal").classList.add('closed');
+  document.getElementById("open-modal").classList.remove('closed');
+};
+
+document.getElementById("open-modal").onclick = function() {
+  document.getElementById("modal").classList.remove('closed');
+  document.getElementById("open-modal").classList.add('closed');
+};
+
 function checkLetter(letter) {
   disableLetterButton(letter);
   if (!word.includes(letter)) {
