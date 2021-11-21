@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pesel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div>
+        <label for="day">Dzień</label>
+        <input type="number" min="1" max="31">
+    </div>
+
+    <div>
+        <label for="month">Miesiąc</label>
+        <input type="month" id="month">
+    </div>
+    <div>
+        <label for="year">Rok</label>
+        <input type="number" min="1900" max="2021" id="year">
+    </div>
+
+    <div>
+        <label for="pesel">PESEL:</label>
+        <input type="text" id="pesel">
+    </div>
+    <button>Waliduj</button>
+    <button>Wyświetl poprawne numery PESEL</button>
+    <button>Wyznacz PESELE</button>
+
+    <script type="text/javascript" src="find_valid_pesels.js"></script>
+    <script type="text/javascript" src="show_all_pesels.js"></script>
+    <script type="text/javascript" src="validate_one_pesel.js"></script>
+</body>
+
+</html>
