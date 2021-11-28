@@ -1,5 +1,6 @@
 var validatePeselWorker = new Worker('validate_one_pesel.js');
 var showAllPeselsWorker = new Worker('show_all_pesels.js');
+var findValidPeselsWorker = new Worker('find_valid_pesels.js');
 var resultsDiv = document.getElementById("results");
 
 showAllPeselsWorker.addEventListener('message', function(e) {
@@ -8,12 +9,23 @@ showAllPeselsWorker.addEventListener('message', function(e) {
     resultsDiv.appendChild(div);
 }, false)
 
+validatePeselWorker.addEventListener('message', function(e) {
+    var div = document.createElement('div');
+    resultsDiv.querySelectorAll('*').forEach(n => n.remove());
+    div.innerHTML = e.data.pesel + " jest poprawny"; 
+    resultsDiv.appendChild(div);
+})
+
 function showAllPesels() {
     showAllPeselsWorker.postMessage(getFormNumbers().birthDate);
 }
 
 function validatePesel() {
     validatePeselWorker.postMessage(getFormNumbers());
+}
+
+function findValidPesels() {
+
 }
 
 function getFormNumbers() {
