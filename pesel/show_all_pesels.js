@@ -17,7 +17,7 @@ function sendResult(pesel) {
 
 
 function buildCombinations(date) {
-    for (var i = 90000; i<99999; i++) {
+    for (var i = 0; i<99999; i++) {
         var restOfPesel;
         if(i < 10) {
             restOfPesel = "0000" + i;

@@ -1,19 +1,32 @@
 var validatePeselWorker = new Worker('validate_one_pesel.js');
 var showAllPeselsWorker = new Worker('show_all_pesels.js');
 var findValidPeselsWorker = new Worker('find_valid_pesels.js');
-var resultsDiv = document.getElementById("results");
+var isValidDiv = document.getElementById("is-valid");
+var foundDiv = document.getElementById("found-pesels");
+var showAllDiv = document.getElementById("show-all");
 
 showAllPeselsWorker.addEventListener('message', function(e) {
     var div = document.createElement('div');
+    isValidDiv.querySelectorAll('*').forEach(n => n.remove());
+    foundDiv.querySelectorAll('*').forEach(n => n.remove());
     div.innerHTML = e.data; 
-    resultsDiv.appendChild(div);
+    showAllDiv.appendChild(div);
 }, false)
 
 validatePeselWorker.addEventListener('message', function(e) {
     var div = document.createElement('div');
-    resultsDiv.querySelectorAll('*').forEach(n => n.remove());
+    foundDiv.querySelectorAll('*').forEach(n => n.remove());
+    showAllDiv.querySelectorAll('*').forEach(n => n.remove());
     div.innerHTML = e.data.pesel + " jest poprawny"; 
-    resultsDiv.appendChild(div);
+    isValidDiv.appendChild(div);
+})
+
+findValidPeselsWorker.addEventListener('message', function(e) {
+    var div = document.createElement('div');
+    isValidDiv.querySelectorAll('*').forEach(n => n.remove());
+    showAllDiv.querySelectorAll('*').forEach(n => n.remove());
+    div.innerHTML = e.data; 
+    foundDiv.appendChild(div);
 })
 
 function showAllPesels() {
@@ -25,7 +38,9 @@ function validatePesel() {
 }
 
 function findValidPesels() {
-
+    var numbers = getFormNumbers();
+    var data = numbers.ordinalNumber + "" + numbers.gender + "" + numbers.controlNumber;
+    findValidPeselsWorker.postMessage(data)
 }
 
 function getFormNumbers() {
